@@ -2,68 +2,56 @@ const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
+  process.env.SUPABASE_ANON_KEY,
+  {
+    auth: {
+      persistSession: false,
+    },
+  }
 );
 
 exports.handler = async (event) => {
-  // Add CORS headers
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-  };
-
-  // Handle preflight request
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 200,
-      headers,
-      body: "",
-    };
-  }
-
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      headers,
-      body: JSON.stringify({ success: false, message: "Method Not Allowed" }),
+      body: JSON.stringify({ error: "Method Not Allowed" }),
     };
   }
 
   try {
     const data = JSON.parse(event.body);
+    console.log("Parsed data:", data);
 
-    const submissionData = {
-      full_name: data.fullName,
-      address: data.address,
-      email: data.email,
-      phone: data.phone,
-      member_type: data.memberType,
-      payment_method: data.paymentMethod,
-      children: data.children,
-    };
-
-    const { error } = await supabase.from("memberships").insert(submissionData);
+    const { data: insertedData, error } = await supabase
+      .from("memberships")
+      .insert({
+        full_name: data.fullName,
+        address: data.address,
+        email: data.email,
+        phone: data.phone,
+        member_type: data.memberType,
+        children: data.children,
+      })
+      .select();
 
     if (error) throw error;
 
+    if (!insertedData || insertedData.length === 0) {
+      throw new Error("No data returned from insert operation");
+    }
+
     return {
       statusCode: 200,
-      headers,
       body: JSON.stringify({
-        success: true,
-        message: "Form submitted successfully",
+        message: "Form data saved successfully",
+        memberId: insertedData[0].id,
       }),
     };
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error in submit-form function:", error);
     return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({
-        success: false,
-        message: `Error submitting form: ${error.message}`,
-      }),
+      statusCode: 400,
+      body: JSON.stringify({ error: error.message }),
     };
   }
 };

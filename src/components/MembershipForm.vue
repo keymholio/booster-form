@@ -44,20 +44,21 @@
           <option value="theater">Theater</option>
           <option value="dance">Dance</option>
         </select>
+        <button type="button" @click="removeChild(index)">Remove Child</button>
       </div>
       <button type="button" @click="addChild" v-if="formData.children.length < 3">Add Child</button>
     </div>
 
-    <div>
-      <label>Payment Method:</label>
-      <select v-model="formData.paymentMethod" required>
-        <option value="venmo">Venmo ($26)</option>
-        <option value="check">Send Check Later</option>
-      </select>
+    <div v-if="showStripeElement">
+      <h3>Payment Information</h3>
+      <div id="card-element-container">
+        <div id="card-element"></div>
+      </div>
+      <div id="card-errors" role="alert"></div>
     </div>
 
     <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? 'Submitting...' : 'Submit' }}
+      {{ isSubmitting ? 'Processing...' : 'Submit and Pay $26' }}
     </button>
 
     <div v-if="submissionMessage" :class="{ 'success': submissionSuccess, 'error': !submissionSuccess }">
@@ -66,8 +67,9 @@
   </form>
 </template>
 
-
 <script>
+import { loadStripe } from '@stripe/stripe-js';
+
 export default {
   name: 'MembershipForm',
   data() {
@@ -78,13 +80,41 @@ export default {
         email: '',
         phone: '',
         memberType: '',
-        children: [],
-        paymentMethod: ''
+        children: []
       },
+      stripe: null,
+      card: null,
+      showStripeElement: true,
       submissionMessage: '',
       submissionSuccess: false,
-      isSubmitting: false
+      isSubmitting: false,
+      memberId: null
     }
+  },
+  async mounted() {
+    this.stripe = await loadStripe(process.env.VUE_APP_STRIPE_PUBLISHABLE_KEY);
+    if (!this.stripe) {
+      console.error('Stripe failed to load');
+      return;
+    }
+    const elements = this.stripe.elements();
+    const style = {
+      base: {
+        fontSize: '16px',
+        color: '#32325d',
+        fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+        fontSmoothing: 'antialiased',
+        '::placeholder': {
+          color: '#aab7c4'
+        },
+      },
+      invalid: {
+        color: '#fa755a',
+        iconColor: '#fa755a'
+      }
+    };
+    this.card = elements.create('card', {style: style});
+    this.card.mount('#card-element');
   },
   methods: {
     addChild() {
@@ -92,31 +122,55 @@ export default {
         this.formData.children.push({ name: '', grade: '', performingArt: '' });
       }
     },
+    removeChild(index) {
+      this.formData.children.splice(index, 1);
+    },
     async submitForm() {
       this.isSubmitting = true;
       this.submissionMessage = '';
       try {
-        const response = await fetch('/.netlify/functions/submit-form', {
+        // First, submit form data
+        const formResponse = await fetch('/.netlify/functions/submit-form', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(this.formData)
         });
 
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
+        if (!formResponse.ok) {
+          throw new Error('Form submission failed');
         }
 
-        const result = await response.json();
-        
-        this.submissionSuccess = true;
-        this.submissionMessage = result.message || 'Form submitted successfully!';
-        
-        if (this.formData.paymentMethod === 'venmo') {
-          window.open('https://venmo.com/your-venmo-account', '_blank');
+        const formResult = await formResponse.json();
+        this.memberId = formResult.memberId;
+
+        // Then, process payment
+        const { token, error } = await this.stripe.createToken(this.card);
+        if (error) {
+          throw new Error(error.message);
         }
+
+        const paymentResponse = await fetch('/.netlify/functions/process-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            token: token.id,
+            amount: 2600, // $26.00
+            memberId: this.memberId
+          })
+        });
+
+        if (!paymentResponse.ok) {
+          throw new Error('Payment failed');
+        }
+
+        // We're not using the payment result, so we can remove this line
+        // const paymentResult = await paymentResponse.json();
+
+        this.submissionSuccess = true;
+        this.submissionMessage = 'Form submitted and payment successful!';
+        
+        // Reset form after successful submission
+        this.resetForm();
       } catch (error) {
         console.error('Error:', error);
         this.submissionSuccess = false;
@@ -124,19 +178,97 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
+    },
+    resetForm() {
+      this.formData = {
+        fullName: '',
+        address: '',
+        email: '',
+        phone: '',
+        memberType: '',
+        children: []
+      };
+      this.card.clear();
     }
   }
 }
 </script>
-
 
 <style scoped>
 form {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 10px;
+  gap: 15px;
+  max-width: 500px;
+  margin: 0 auto;
 }
-.success { color: green; }
-.error { color: red; }
+
+label {
+  font-weight: bold;
+}
+
+input, select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.success {
+  color: green;
+  font-weight: bold;
+}
+
+.error {
+  color: red;
+  font-weight: bold;
+}
+
+#card-element-container {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f9fa;
+}
+
+#card-element {
+  width: 100%;
+  padding: 10px 0;
+}
+
+#card-errors {
+  color: #fa755a;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Adjust the form max-width to give more space if needed */
+form {
+  max-width: 600px;
+}
+
+/* Make inputs and selects consistent with the Stripe element */
+input, select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
 </style>
