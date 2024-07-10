@@ -1,7 +1,7 @@
 <template>
   <form @submit.prevent="submitForm">
     <div>
-      <label for="fullName">Full Name:</label>
+      <label for="fullName">Full name:</label>
       <input id="fullName" v-model="formData.fullName" required>
     </div>
     
@@ -16,13 +16,14 @@
     </div>
     
     <div>
-      <label for="phone">Phone Number:</label>
+      <label for="phone">Phone:</label>
       <input id="phone" v-model="formData.phone" type="tel" required>
     </div>
     
     <div>
-      <label>Member Type:</label>
+      <label>Member type:</label>
       <select v-model="formData.memberType" required>
+        <option value=""></option>
         <option value="parent">Parent</option>
         <option value="staff">Staff</option>
         <option value="community">Community Member</option>
@@ -58,7 +59,7 @@
     </div>
 
     <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? 'Processing...' : 'Submit and Pay $26' }}
+      {{ isSubmitting ? 'Processing...' : 'Pay' }}
     </button>
 
     <div v-if="submissionMessage" :class="{ 'success': submissionSuccess, 'error': !submissionSuccess }">
@@ -163,9 +164,6 @@ export default {
           throw new Error('Payment failed');
         }
 
-        // We're not using the payment result, so we can remove this line
-        // const paymentResult = await paymentResponse.json();
-
         this.submissionSuccess = true;
         this.submissionMessage = 'Form submitted and payment successful!';
         
@@ -195,33 +193,42 @@ export default {
 </script>
 
 <style scoped>
+
 form {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 15px;
-  max-width: 500px;
+  align-items: stretch;
+  gap: 1rem;
   margin: 0 auto;
+  width: 100%;
+}
+
+form > div {
+  display: flex;
+  align-items: stretch;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
 }
 
 label {
   font-weight: bold;
-}
-
-input, select {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  display:block;
 }
 
 button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 15px;
+  background-color: #ffe57c;
+  color: #202020;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 1rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  width: 100%;
+}
+button:hover {
+  background-color: #fbcf1d;
 }
 
 button:disabled {
@@ -258,17 +265,13 @@ button:disabled {
   font-size: 14px;
 }
 
-/* Adjust the form max-width to give more space if needed */
-form {
-  max-width: 600px;
-}
-
 /* Make inputs and selects consistent with the Stripe element */
 input, select {
   width: 100%;
-  padding: 10px;
+  padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
+  background-color: #f8F9fa;
 }
 </style>
