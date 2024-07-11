@@ -14,6 +14,18 @@
           <li><strong>Online Messaging Service:</strong> Facebook or Instagram Messaging</li>
         </ul>
       </section>
+
+      <section>
+        <h2>Membership Policy</h2>
+        <p>Please note that memberships to the Wantagh Performing Arts Booster Club are non-refundable. When you become a member, you're making a commitment to support our organization and its mission. Here are some key points about our membership policy:</p>
+        <ul>
+            <li>Memberships are valid for one school year (September through August).</li>
+            <li>The $26 membership fee is a one-time payment for the entire school year.</li>
+            <li>Memberships cannot be transferred to another individual or family.</li>
+            <li>If you have any questions about membership before signing up, please contact us.</li>
+        </ul>
+        <p>We appreciate your understanding and support. Your membership helps us continue to enhance the performing arts programs in our schools.</p>
+       </section>
   
       <section>
         <h2>Return Policy and Process</h2>

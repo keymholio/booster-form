@@ -5,7 +5,7 @@
       <img alt="Booster logo" src="./assets/booster-logo.svg">
     </header>
     <router-view></router-view>
-    <SiteFooter />>
+    <SiteFooter />
   </div>
 </template>
 
