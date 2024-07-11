@@ -53,6 +53,7 @@ header {
 
 header img {
   width: 100px;
+  margin-left: 1rem;
 }
 
 .content {

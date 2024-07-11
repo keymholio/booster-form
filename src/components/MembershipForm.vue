@@ -31,23 +31,38 @@
       </select>
     </div>
     
-    <div v-if="formData.memberType === 'parent'">
+    <div v-if="formData.memberType === 'parent'" class="parent">
       <h3>Children Information</h3>
-      <div v-for="(child, index) in formData.children" :key="index">
+      <div v-for="(child, index) in formData.children" :key="index" class="children">
         <h4>Child {{ index + 1 }}</h4>
-        <input v-model="child.name" placeholder="Student's Name" required>
-        <input v-model="child.grade" placeholder="Grade" required>
-        <select v-model="child.performingArt" required>
-          <option value="">Select Performing Art</option>
-          <option value="chorus">Chorus</option>
-          <option value="orchestra">Orchestra</option>
-          <option value="band">Band</option>
-          <option value="theater">Theater</option>
-          <option value="dance">Dance</option>
-        </select>
-        <button type="button" @click="removeChild(index)">Remove Child</button>
+        
+        <div>
+          <label>Student's Name</label>
+          <input v-model="child.name" required>
+        </div>
+
+        <div>
+          <label>Grade</label>
+          <input v-model="child.grade" required>
+        </div>
+        
+        <div>
+          <fieldset>
+            <legend>Performing Arts:</legend>
+            <div v-for="art in performingArts" :key="art.value">
+              <input 
+                type="checkbox" 
+                :id="`child-${index}-${art.value}`" 
+                :value="art.value" 
+                v-model="child.performingArts"
+              >
+              <label :for="`child-${index}-${art.value}`">{{ art.label }}</label>
+            </div>
+          </fieldset>
+        </div>
+        <button type="button" class="remove" @click="removeChild(index)">Remove Child</button>
       </div>
-      <button type="button" @click="addChild" v-if="formData.children.length < 3">Add Child</button>
+      <button type="button" @click="addChild" v-if="formData.children.length > 0 && formData.children.length < 4">Add Another Child</button>
     </div>
 
     <div v-if="showStripeElement">
@@ -83,6 +98,13 @@ export default {
         memberType: '',
         children: []
       },
+      performingArts: [
+        { value: 'chorus', label: 'Chorus' },
+        { value: 'orchestra', label: 'Orchestra' },
+        { value: 'band', label: 'Band' },
+        { value: 'theater', label: 'Theater' },
+        { value: 'dance', label: 'Dance' }
+      ],
       stripe: null,
       card: null,
       showStripeElement: true,
@@ -90,6 +112,13 @@ export default {
       submissionSuccess: false,
       isSubmitting: false,
       memberId: null
+    }
+  },
+  watch: {
+    'formData.memberType': function(newValue) {
+      if (newValue === 'parent' && this.formData.children.length === 0) {
+        this.addChild();
+      }
     }
   },
   async mounted() {
@@ -119,8 +148,12 @@ export default {
   },
   methods: {
     addChild() {
-      if (this.formData.children.length < 3) {
-        this.formData.children.push({ name: '', grade: '', performingArt: '' });
+      if (this.formData.children.length < 4) {
+        this.formData.children.push({
+          name: '',
+          grade: '',
+          performingArts: []
+        });
       }
     },
     removeChild(index) {
@@ -130,11 +163,21 @@ export default {
       this.isSubmitting = true;
       this.submissionMessage = '';
       try {
+        // Prepare the form data, joining performingArts into a string
+        const formDataToSend = {
+          ...this.formData,
+          children: this.formData.children.map(child => ({
+            ...child,
+            performingArts: child.performingArts.join(', ')
+          }))
+        };
+
+
         // First, submit form data
         const formResponse = await fetch('/.netlify/functions/submit-form', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(this.formData)
+          body: JSON.stringify(formDataToSend)
         });
 
         if (!formResponse.ok) {
@@ -194,7 +237,7 @@ export default {
 
 <style scoped>
 
-form {
+form, .children {
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -203,7 +246,7 @@ form {
   width: 100%;
 }
 
-form > div {
+form > div, .children > div {
   display: flex;
   align-items: stretch;
   flex-direction: column;
@@ -234,6 +277,12 @@ button:hover {
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+button.remove {
+  width: auto;
+  background-color:#fff;
+  border: 2px solid #ffe57c;
 }
 
 .success {
@@ -274,4 +323,16 @@ input, select {
   font-size: 16px;
   background-color: #f8F9fa;
 }
+
+fieldset input {
+  width: auto;
+}
+
+fieldset > div {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem 0;
+}
+
+
 </style>
