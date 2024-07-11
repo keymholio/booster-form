@@ -3,6 +3,10 @@
       <h1>Thank you for becoming a member!</h1>
       <p>We appreciate your support of the Wantagh Performing Arts Booster Club.</p>
       <div class="social-links">
+        <a href="https://linktr.ee/WPABC" target="_blank" rel="noopener noreferrer">
+          <img src="@/assets/people-group-regular.svg" alt="Links">
+          Get involved
+        </a>
         <a href="https://www.instagram.com/wantaghperformingartsbooster" target="_blank" rel="noopener noreferrer">
           <img src="@/assets/instagram.svg" alt="Instagram">
           Follow us on Instagram

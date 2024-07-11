@@ -1,7 +1,7 @@
 <template>
   <div class="content">
     <div class="fee">
-      <div class="item">Membership fee</div>
+      <div class="item">2024-25 <br/>Annual membership fee</div>
       <div class="cost">$26.00</div>
     </div>
     <form @submit.prevent="submitForm">
@@ -268,6 +268,7 @@ export default {
 .fee .item {
   color: #555;
   font-size: 1.2rem;
+  line-height:1.8rem;
 }
 
 .fee .cost {
