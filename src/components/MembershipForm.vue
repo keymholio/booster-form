@@ -1,90 +1,97 @@
 <template>
-  <form @submit.prevent="submitForm">
-    <div>
-      <label for="fullName">Full name:</label>
-      <input id="fullName" v-model="formData.fullName" required>
+  <div class="content">
+    <div class="fee">
+      <div class="item">Membership fee</div>
+      <div class="cost">$26.00</div>
     </div>
-    
-    <div>
-      <label for="address">Address:</label>
-      <input id="address" v-model="formData.address" required>
-    </div>
-    
-    <div>
-      <label for="email">Email:</label>
-      <input id="email" v-model="formData.email" type="email" required>
-    </div>
-    
-    <div>
-      <label for="phone">Phone:</label>
-      <input id="phone" v-model="formData.phone" type="tel" required>
-    </div>
-    
-    <div>
-      <label>Member type:</label>
-      <select v-model="formData.memberType" required>
-        <option value=""></option>
-        <option value="parent">Parent</option>
-        <option value="staff">Staff</option>
-        <option value="community">Community Member</option>
-        <option value="other">Other Supporter</option>
-      </select>
-    </div>
-    
-    <div v-if="formData.memberType === 'parent'" class="parent">
-      <h3>Children Information</h3>
-      <div v-for="(child, index) in formData.children" :key="index" class="children">
-        <h4>Child {{ index + 1 }}</h4>
-        
-        <div>
-          <label>Student's Name</label>
-          <input v-model="child.name" required>
-        </div>
-
-        <div>
-          <label>Grade</label>
-          <input v-model="child.grade" required>
-        </div>
-        
-        <div>
-          <fieldset>
-            <legend>Performing Arts:</legend>
-            <div v-for="art in performingArts" :key="art.value">
-              <input 
-                type="checkbox" 
-                :id="`child-${index}-${art.value}`" 
-                :value="art.value" 
-                v-model="child.performingArts"
-              >
-              <label :for="`child-${index}-${art.value}`">{{ art.label }}</label>
-            </div>
-          </fieldset>
-        </div>
-        <button type="button" class="remove" @click="removeChild(index)">Remove Child</button>
+    <form @submit.prevent="submitForm">
+      <div>
+        <label for="fullName">Full name:</label>
+        <input id="fullName" v-model="formData.fullName" required>
       </div>
-      <button type="button" @click="addChild" v-if="formData.children.length > 0 && formData.children.length < 4">Add Another Child</button>
-    </div>
-
-    <div v-if="showStripeElement">
-      <h3>Payment Information</h3>
-      <div id="card-element-container">
-        <div id="card-element"></div>
+      
+      <div>
+        <label for="address">Address:</label>
+        <input id="address" v-model="formData.address" required>
       </div>
-      <div id="card-errors" role="alert"></div>
-    </div>
+      
+      <div>
+        <label for="email">Email:</label>
+        <input id="email" v-model="formData.email" type="email" required>
+      </div>
+      
+      <div>
+        <label for="phone">Phone:</label>
+        <input id="phone" v-model="formData.phone" type="tel" required>
+      </div>
+      
+      <div>
+        <label>Member type:</label>
+        <select v-model="formData.memberType" required>
+          <option value=""></option>
+          <option value="parent">Parent</option>
+          <option value="staff">Staff</option>
+          <option value="community">Community Member</option>
+          <option value="other">Other Supporter</option>
+        </select>
+      </div>
+      
+      <div v-if="formData.memberType === 'parent'" class="parent">
+        <h3>Children Information</h3>
+        <div v-for="(child, index) in formData.children" :key="index" class="children">
+          <h4>Child {{ index + 1 }}</h4>
+          
+          <div>
+            <label>Student's Name</label>
+            <input v-model="child.name" required>
+          </div>
 
-    <button type="submit" :disabled="isSubmitting">
-      {{ isSubmitting ? 'Processing...' : 'Pay' }}
-    </button>
+          <div>
+            <label>Grade</label>
+            <input v-model="child.grade" required>
+          </div>
+          
+          <div>
+            <fieldset>
+              <legend>Performing Arts:</legend>
+              <div v-for="art in performingArts" :key="art.value">
+                <input 
+                  type="checkbox" 
+                  :id="`child-${index}-${art.value}`" 
+                  :value="art.value" 
+                  v-model="child.performingArts"
+                >
+                <label :for="`child-${index}-${art.value}`">{{ art.label }}</label>
+              </div>
+            </fieldset>
+          </div>
+          <button type="button" class="remove" @click="removeChild(index)">Remove Child</button>
+        </div>
+        <button type="button" @click="addChild" v-if="formData.children.length > 0 && formData.children.length < 4">Add Another Child</button>
+      </div>
 
-    <div v-if="submissionMessage" :class="{ 'success': submissionSuccess, 'error': !submissionSuccess }">
-      {{ submissionMessage }}
-    </div>
-  </form>
+      <div v-if="showStripeElement">
+        <h3>Payment Information</h3>
+        <div id="card-element-container">
+          <div id="card-element"></div>
+        </div>
+        <div id="card-errors" role="alert"></div>
+      </div>
+
+      <button type="submit" :disabled="isSubmitting">
+        {{ isSubmitting ? 'Processing...' : 'Pay' }}
+      </button>
+
+      <div v-if="submissionMessage" :class="{ 'success': submissionSuccess, 'error': !submissionSuccess }">
+        {{ submissionMessage }}
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
 import { loadStripe } from '@stripe/stripe-js';
+import { useRouter } from 'vue-router';
 
 export default {
   name: 'MembershipForm',
@@ -113,6 +120,9 @@ export default {
       isSubmitting: false,
       memberId: null
     }
+  },
+  created() {
+    this.router = useRouter();
   },
   watch: {
     'formData.memberType': function(newValue) {
@@ -211,7 +221,7 @@ export default {
         this.submissionMessage = 'Form submitted and payment successful!';
         
         // Reset form after successful submission
-        this.resetForm();
+        this.$router.push('/success');
       } catch (error) {
         console.error('Error:', error);
         this.submissionSuccess = false;
@@ -236,6 +246,58 @@ export default {
 </script>
 
 <style scoped>
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 920px;
+  margin: 2rem auto;
+  gap: 2rem;
+}
+
+.content > form {
+  flex: 1 1 60%;
+  width: 100%; /* Ensure it takes full width */
+}
+
+.fee {
+  flex: 1 1 30%;
+  padding: 1rem 0 0 3rem;
+}
+
+.fee .item {
+  color: #555;
+  font-size: 1.2rem;
+}
+
+.fee .cost {
+  font-size: 3rem;
+}
+
+@media only screen and (max-width: 768px) {
+  .content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .fee {
+    order: -1;
+    flex-basis: 100%;
+    padding: 1rem 0;
+    text-align: center;
+  }
+  
+  .content > form {
+    flex-basis: 100%;
+  }
+}
+
+@media only screen and (max-width: 920px) {
+  .content {
+    margin-right: 2rem;
+    margin-left: 2rem;
+  }
+}
 
 form, .children {
   display: flex;
