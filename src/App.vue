@@ -5,12 +5,18 @@
       <img alt="Booster logo" src="./assets/booster-logo.svg">
     </header>
     <router-view></router-view>
+    <SiteFooter />>
   </div>
 </template>
 
 <script>
+import SiteFooter from './components/SiteFooter.vue'
+
   export default {
-    name: 'App'
+    name: 'App',
+    components: {
+      SiteFooter
+    }
   }
 </script>
 
