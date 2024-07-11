@@ -3,15 +3,15 @@
       <h1>Thank you for becoming a member!</h1>
       <p>We appreciate your support of the Wantagh Performing Arts Booster Club.</p>
       <div class="social-links">
-        <a href="https://www.instagram.com/wantaghperformingartsboosterclub" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/wantaghperformingartsbooster" target="_blank" rel="noopener noreferrer">
           <img src="@/assets/instagram.svg" alt="Instagram">
           Follow us on Instagram
         </a>
-        <a href="https://www.facebook.com/WantaghPerformingArtsBoosterClub" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.facebook.com/groups/wpabc" target="_blank" rel="noopener noreferrer">
           <img src="@/assets/square-facebook.svg" alt="Facebook">
           Like us on Facebook
         </a>
-        <a href="mailto:wpaboosterclub@gmail.com">
+        <a href="mailto:wantaghperformingartsbooster@gmail.com">
           <img src="@/assets/envelope-regular.svg" alt="Email">
           Email us
         </a>
