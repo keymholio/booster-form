@@ -324,6 +324,10 @@ input, select {
   background-color: #f8F9fa;
 }
 
+select {
+  min-height: 52px;
+}
+
 fieldset input {
   width: auto;
 }
@@ -332,6 +336,7 @@ fieldset > div {
   display: flex;
   gap: 0.25rem;
   padding: 0.25rem 0;
+  align-items: center;
 }
 
 
