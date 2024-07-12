@@ -1,6 +1,6 @@
 <template>
     <div class="info-page">
-      <a href="/">&#8592; Back to membership form</a>
+      <a href="/">&#8592; Back to homepage</a>
 
       <h1>Customer Service & Policies</h1>
       
