@@ -1,8 +1,10 @@
 <template>
   <div id="app">
     <header>
-      <div>Wantagh Performing Arts Booster Club</div>
-      <img alt="Booster logo" src="./assets/booster-logo.svg">
+      <router-link to="/" class="header-link">
+        <div>Wantagh Performing Arts Booster Club</div>
+        <img alt="Booster logo" src="./assets/booster-logo.svg">
+      </router-link>
     </header>
     <router-view></router-view>
     <SiteFooter />
@@ -38,17 +40,24 @@ html, body {
 
 header {
   background-color: #000;
-  display: flex;
-  justify-content: space-between;
+  
   font-size: 2rem;
   color: #fff;
   padding: 1rem 2rem;
-  align-items: center;
+  
 }
 
 header img {
   width: 100px;
   margin-left: 1rem;
+}
+
+.header-link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media only screen and (max-width: 768px) {
