@@ -19,22 +19,22 @@
         <div class="benefit">
           <img src="@/assets/user-music-regular.svg" alt="Support Icon">
           <h3>Support Students</h3>
-          <p>Directly contribute to the success of our performing arts programs.</p>
+          <p>Directly contribute to the success of our performing arts programs</p>
         </div>
         <div class="benefit">
           <img src="@/assets/people-roof-regular.svg" alt="Community Icon">
           <h3>Build Community</h3>
-          <p>Connect with other parents and supporters of the arts.</p>
+          <p>Connect with other parents and supporters of the arts</p>
         </div>
         <div class="benefit">
           <img src="@/assets/masks-theater-regular.svg" alt="Events Icon">
           <h3>Enhance Programs</h3>
-          <p>Provide resources, funding, and support for performances and educational experiences.</p>
+          <p>Provide resources, funding, and support for performances and educational experiences</p>
         </div>
         <div class="benefit">
           <img src="@/assets/bullhorn-regular.svg" alt="Voice Icon">
           <h3>Have a Voice</h3>
-          <p>Influence decisions that shape our arts programs.</p>
+          <p>Influence decisions that shape our arts programs</p>
         </div>
       </div>
     </section>
