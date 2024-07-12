@@ -5,6 +5,7 @@ import HomePage from "@/components/HomePage.vue";
 import MembershipForm from "@/components/MembershipForm.vue";
 import SuccessPage from "@/components/SuccessPage.vue";
 import InfoPage from "@/components/InfoPage.vue";
+import AdminPage from "@/components/AdminPage.vue";
 
 const routes = [
   {
@@ -30,6 +31,12 @@ const routes = [
     name: "Info",
     component: InfoPage,
     meta: { title: "Club Information" },
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminPage,
+    meta: { title: "Admin - Manage Members" },
   },
 ];
 
