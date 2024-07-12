@@ -76,6 +76,7 @@ export default {
   display: flex;
   align-items: center;
   padding: 4rem;
+  line-height: 1.5rem;
 }
 
 .hero h1 {
@@ -124,6 +125,7 @@ export default {
 .benefit {
   flex-basis: calc(25% - 2rem);
   margin: 1rem;
+  line-height: 1.4rem;
 }
 
 .benefit img {
@@ -153,10 +155,12 @@ export default {
 
   .hero h1 {
     font-size: 1.5rem;
+    text-align: center;
   }
 
   .hero p {
     font-size: 1rem;
+    text-align: center;
   }
 
   .cta-button {
