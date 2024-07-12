@@ -75,12 +75,13 @@ export default {
   color: white;
   display: flex;
   align-items: center;
-  padding: 2rem;
+  padding: 4rem;
 }
 
 .hero h1 {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
+  line-height: 2.2rem;
 }
 
 .hero p {
@@ -147,6 +148,7 @@ export default {
 
   .hero-text {
     width: 100%;
+    max-width: 700px;
   }
 
   .hero h1 {
