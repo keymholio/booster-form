@@ -65,7 +65,7 @@
               </div>
             </fieldset>
           </div>
-          <button type="button" class="remove" @click="removeChild(index)">Remove Child</button>
+          <button v-if="index !== 0" type="button" class="remove" @click="removeChild(index)">Remove Child</button>
         </div>
         <button type="button" @click="addChild" v-if="formData.children.length > 0 && formData.children.length < 4">Add Another Child</button>
       </div>
@@ -398,6 +398,10 @@ input, select {
     background-size: 0.65em auto;
     padding-right: 1.5em;
   }
+}
+
+fieldset {
+  margin-bottom: 1rem;
 }
 
 fieldset input {
