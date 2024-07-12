@@ -91,7 +91,7 @@ export default {
 
 .cta-button {
   display: inline-block;
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 3.5rem;
   background-color: #ffe57c;
   color: #202020;
   text-decoration: none;
