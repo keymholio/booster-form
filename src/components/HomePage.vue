@@ -137,12 +137,12 @@ export default {
     height: auto;
   }
 
-  .hero-image {
-    height: 300px; /* Adjust as needed */
+  .hero-image img {
+    height: 250px; /* Adjust as needed */
   }
 
   .hero-content {
-    padding: 2rem 2rem;
+    padding: 2rem 2.5rem 3rem;
   }
 
   .hero-text {
