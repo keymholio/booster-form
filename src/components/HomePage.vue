@@ -38,6 +38,18 @@
         </div>
       </div>
     </section>
+
+    <!-- New Linktree promo section -->
+    <section class="linktree-promo">
+      <div class="promo-image">
+        <img src="@/assets/linktree-promo.png" alt="Linktree Promo">
+      </div>
+      <div class="promo-content">
+        <h2>Stay connected</h2>
+        <p>Get the latest updates about the Wantagh Performing Arts Booster Club. Find all our important links, events, and resources on our Linktree page.</p>
+        <a href="https://linktr.ee/WPABC" target="_blank" rel="noopener noreferrer" class="cta-button">Visit Our Linktree</a>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -134,6 +146,66 @@ export default {
   margin-bottom: 1rem;
 }
 
+.linktree-promo {
+  display: flex;
+  max-width: 1000px;
+  margin: 4rem auto;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.promo-image {
+  flex: 1;
+  min-height: 300px;
+  overflow: hidden;
+}
+
+.promo-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.promo-content {
+  flex: 1;
+  padding: 1rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.promo-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.25rem;
+  color: #202020;
+}
+
+.promo-content p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: #4a4a4a;
+  line-height: 1.5;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 0.8rem 1.5rem;
+  background-color: #ffe57c;
+  color: #202020;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+  background-color: #fbcf1d;
+}
+
 @media (max-width: 768px) {
   .hero {
     flex-direction: column;
@@ -171,6 +243,24 @@ export default {
 
   .benefit {
     flex-basis: calc(50% - 2rem);
+  }
+  .linktree-promo {
+    flex-direction: column;
+    margin: 2rem;
+  }
+
+  .promo-image {
+    min-height: 200px;
+  }
+
+  .promo-content {
+    align-items: center;
+    text-align: center;
+  }
+
+  .cta-button {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>
