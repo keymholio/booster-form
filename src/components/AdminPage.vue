@@ -199,6 +199,7 @@
           const { data, error } = await this.supabase
             .from('memberships')
             .select('*')
+            .eq('payment_status', 'paid') // Only fetch paid members
           if (error) throw error
           this.members = data.map(member => {
             if (member.children && typeof member.children === 'string') {
@@ -210,10 +211,10 @@
             }
             return member;
           });
-          console.log('Fetched members:', this.members)
+          console.log('Fetched paid members:', this.members)
         } catch (error) {
-          console.error('Error fetching members:', error)
-          alert('Failed to fetch members. Please check the console for details.')
+          console.error('Error fetching paid members:', error)
+          alert('Failed to fetch paid members. Please check the console for details.')
         }
       },
       openModal(mode, member = null) {
