@@ -1,13 +1,13 @@
 <template>
     <div class="admin-page">
-      <h1>Manage Members</h1>
+      <h1>Members</h1>
       <div v-if="!isAuthenticated">
         <h2>Login</h2>
         <input v-model="password" type="password" placeholder="Enter password">
         <button @click="authenticate">Login</button>
       </div>
       <div v-else>
-        <h2>Members</h2>
+        <p>Total Paid Members: {{ totalMembers }}</p>
         <div class="action-buttons">
           <button @click="openModal('create')">Add New Member</button>
           <button @click="exportToCsv">Export to CSV</button>
@@ -15,6 +15,7 @@
         <table>
           <thead>
             <tr>
+              <th>#</th>
               <th>Name</th>
               <th>Email</th>
               <th>Member Type</th>
@@ -22,7 +23,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="member in members" :key="member.id">
+            <tr v-for="(member, index) in members" :key="member.id">
+              <td>{{ index + 1 }}</td>
               <td>{{ member.full_name }}</td>
               <td>{{ member.email }}</td>
               <td>
@@ -178,6 +180,11 @@
         ]
       }
     },
+    computed: {
+      totalMembers() {
+        return this.members.length;
+      }
+    },
     created() {
       this.supabase = createClient(
         process.env.VUE_APP_SUPABASE_URL,
@@ -186,6 +193,9 @@
       console.log('Supabase client initialized:', this.supabase)
     },
     methods: {
+      getTotalMembers() {
+        return this.members.length;
+      },
       async authenticate() {
         if (this.password === process.env.VUE_APP_ADMIN_PASSWORD) {
           this.isAuthenticated = true
@@ -386,6 +396,12 @@
     border: 1px solid #ddd;
     padding: 0.5rem;
     text-align: left;
+  }
+
+  th:first-child,
+  td:first-child {
+    width: 50px;
+    text-align: center;
   }
   
   button {
