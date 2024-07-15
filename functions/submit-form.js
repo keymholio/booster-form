@@ -20,7 +20,40 @@ exports.handler = async (event) => {
 
   try {
     const data = JSON.parse(event.body);
-    console.log("Parsed data:", data);
+
+    // Validate required fields
+    if (
+      !data.fullName ||
+      !data.address ||
+      !data.email ||
+      !data.phone ||
+      !data.memberType
+    ) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ error: "Missing required fields" }),
+      };
+    }
+
+    // Validate children if member type is parent
+    if (data.memberType === "parent") {
+      if (!data.children || !data.children.length) {
+        return {
+          statusCode: 400,
+          body: JSON.stringify({
+            error: "Parent members must have at least one child",
+          }),
+        };
+      }
+      for (let child of data.children) {
+        if (!child.name || !child.grade || !child.performingArts) {
+          return {
+            statusCode: 400,
+            body: JSON.stringify({ error: "Incomplete child information" }),
+          };
+        }
+      }
+    }
 
     const { data: insertedData, error } = await supabase
       .from("memberships")

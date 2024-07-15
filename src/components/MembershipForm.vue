@@ -172,50 +172,43 @@ export default {
     async submitForm() {
       this.isSubmitting = true;
       this.submissionMessage = '';
+      
+      if (!this.validateForm()) {
+        this.isSubmitting = false;
+        return;
+      }
+
       try {
+        // First, process the payment
+        const { token, error } = await this.stripe.createToken(this.card);
+        if (error) {
+          throw new Error(error.message);
+        }
+
         // Prepare the form data, joining performingArts into a string
         const formDataToSend = {
           ...this.formData,
           children: this.formData.children.map(child => ({
             ...child,
             performingArts: child.performingArts.join(', ')
-          }))
+          })),
+          token: token.id
         };
 
-
-        // First, submit form data
-        const formResponse = await fetch('/.netlify/functions/submit-form', {
+        // Submit form data and process payment in one step
+        const response = await fetch('/.netlify/functions/submit-form-and-process-payment', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formDataToSend)
         });
 
-        if (!formResponse.ok) {
-          throw new Error('Form submission failed');
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Form submission and payment failed');
         }
 
-        const formResult = await formResponse.json();
-        this.memberId = formResult.memberId;
-
-        // Then, process payment
-        const { token, error } = await this.stripe.createToken(this.card);
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        const paymentResponse = await fetch('/.netlify/functions/process-payment', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            token: token.id,
-            amount: 2600, // $26.00
-            memberId: this.memberId
-          })
-        });
-
-        if (!paymentResponse.ok) {
-          throw new Error('Payment failed');
-        }
+        const result = await response.json();
+        this.memberId = result.memberId;
 
         this.submissionSuccess = true;
         this.submissionMessage = 'Form submitted and payment successful!';
@@ -229,6 +222,29 @@ export default {
       } finally {
         this.isSubmitting = false;
       }
+    },
+    validateForm() {
+      // Check all required fields
+      if (!this.formData.fullName || !this.formData.address || !this.formData.email || !this.formData.phone || !this.formData.memberType) {
+        this.submissionMessage = 'Please fill out all required fields.';
+        return false;
+      }
+
+      // Check children info if member type is parent
+      if (this.formData.memberType === 'parent') {
+        if (!this.formData.children.length) {
+          this.submissionMessage = 'Please add at least one child for parent members.';
+          return false;
+        }
+        for (let child of this.formData.children) {
+          if (!child.name || !child.grade || !child.performingArts.length) {
+            this.submissionMessage = 'Please complete all child information.';
+            return false;
+          }
+        }
+      }
+
+      return true;
     },
     resetForm() {
       this.formData = {
